@@ -1,4 +1,5 @@
 import { Outlet, useLocation } from 'react-router-dom';
+import CategoriesBar from '../Components/CategoriesBar';
 import CategoryBar from '../Components/CategoryBar';
 import Footer from '../Components/Footer';
 import NavBar from '../Components/Navbar';
@@ -19,6 +20,7 @@ const MainLayout = () => {
             <CategoryBar />
             {isHomePage && <Slider />}
             {isHomePage && <ReturnPolicy />}
+            {isHomePage && <CategoriesBar />}
             {isHomePage && <ProductList />}
 
             <Outlet />

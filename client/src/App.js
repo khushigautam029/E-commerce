@@ -15,6 +15,7 @@ import NotFound from './Pages/NotFound';
 import Orders from './Pages/Orders';
 import ProductDescription from './Pages/ProductDescription';
 import ProductList from './Pages/ProductList';
+import ProductsByCategory from './Pages/ProductsByCategory';
 import SignupPage from './Pages/SignupPage';
 import Skincare from './Pages/Skincare';
 import ProtectedRoute from './ProtectedRoute';
@@ -41,6 +42,7 @@ const App = () => {
             <Route path="delete-account" element={<DeleteAccount />} />
             <Route path="home" element={<Home />} />
             <Route path="products" element={<ProductList />} />
+            <Route path="products/:category" element={<ProductsByCategory />} />
             <Route path="clothes" element={<Clothes />} />
             <Route path="skincare" element={<Skincare />} />
             <Route path="footwear" element={<Footwear />} />

@@ -1,5 +1,5 @@
 import { useContext, useState } from 'react';
-import { FaSearch, FaShoppingCart, FaUser } from 'react-icons/fa';
+import { FaChevronDown, FaSearch, FaShoppingCart, FaUser } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { CartContext } from '../context/CartContext';
@@ -7,7 +7,7 @@ import { CartContext } from '../context/CartContext';
 const Navbar = () => {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
-  const { cartItems } = useContext(CartContext); // Access cart from context
+  const { cartItems } = useContext(CartContext);
   const [showDropdown, setShowDropdown] = useState(false);
 
   const handleLogout = () => {
@@ -16,80 +16,112 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-3">
-      <div className="container">
+    <nav className="w-full border border-gray-300 bg-white shadow-sm">
+      <div className="mx-auto flex max-w-7xl items-center px-4 py-2.5 sm:px-6 lg:px-8">
+        
         {/* Logo */}
-        <Link className="navbar-brand fw-bold text-purple" to="/">
-          <span style={{ color: '#720760', fontSize: '30px' }}>LifestyleNest</span>
-        </Link>
-
-        {/* Search Bar */}
-        <form className="d-flex flex-grow-1 mx-4">
-          <div className="input-group">
-            <span className="input-group-text bg-white border-end-0">
-              <FaSearch />
-            </span>
-            <input
-              type="text"
-              className="form-control border-start-0"
-              placeholder="Try clothes, gifts or Search by Product Code"
-            />
-          </div>
-        </form>
-
-        {/* Right Side Links */}
-        <div className="d-flex align-items-center gap-4 position-relative">
-
-          {/* Profile Dropdown */}
-          <div
-            className="position-relative"
-            onMouseEnter={() => setShowDropdown(true)}
-            onMouseLeave={() => setShowDropdown(false)}
-            style={{ cursor: 'pointer' }}
+        <div className="flex min-w-[180px] items-center">
+          <Link
+            className="text-xl font-semibold tracking-tight text-pink-700 no-underline transition-opacity hover:opacity-80"
+            to="/"
           >
-            <div className="d-flex align-items-center text-dark">
-              <FaUser className="me-2" /> Profile
+            E-Commerce
+          </Link>
+        </div>
+
+        {/* Search */}
+        <div className="mx-auto hidden flex-1 justify-center md:flex">
+          <div className="relative w-full max-w-md">
+            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+              <FaSearch size={14} />
             </div>
 
+            <input
+              type="text"
+              className="block w-full rounded-full border border-gray-300 bg-slate-50 py-2 pl-9 pr-4 text-sm text-gray-700 transition focus:border-pink-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-pink-200"
+              placeholder="Search products"
+            />
+          </div>
+        </div>
+
+        {/* Right Section */}
+        <div className="ml-auto flex items-center gap-2 sm:gap-3">
+
+          {/* Profile */}
+          <div
+            className="relative"
+            onMouseEnter={() => setShowDropdown(true)}
+            onMouseLeave={() => setShowDropdown(false)}
+          >
+            <button className="flex items-center gap-2 rounded-full border border-transparent bg-transparent px-1.5 py-1 text-pink-700 transition hover:text-pink-600">
+              
+              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-pink-100 text-pink-700">
+                <FaUser size={13} />
+              </div>
+
+              <span className="hidden text-sm font-medium sm:block">
+                {user?.username || 'Profile'}
+              </span>
+
+              <FaChevronDown size={10} className="text-pink-700" />
+            </button>
+
             {showDropdown && (
-              <div className="position-absolute bg-white shadow rounded p-3" style={{ top: '40px', right: 0, width: '220px', zIndex: 1000 }}>
-                {/* User Info */}
-                <div className="text-center mb-3">
-                  <div>Hello!!..{user?.username || 'Guest'}</div>
-                  <div className="text-muted">Phone:-{user?.phone || '+91 6367739531'}</div>
+              <div className="absolute right-0 z-50 mt-2 w-56 origin-top-right overflow-hidden rounded-xl border border-gray-200 bg-white py-2 shadow-xl">
+                <div className="border-b border-gray-100 bg-gray-50 px-4 py-3">
+                  <p className="text-sm text-gray-500">Signed in as</p>
+                  <p className="truncate text-sm font-semibold text-gray-900">
+                    {user?.username || 'Guest'}
+                  </p>
+                  <p className="mt-1 text-xs text-gray-500">
+                    {user?.phone || '+91 6367739531'}
+                  </p>
                 </div>
 
-                <hr />
-
-                {/* My Orders */}
-                <div className="mb-2" style={{ cursor: 'pointer' }} onClick={() => navigate('/my-orders')}>
+                <button
+                  onClick={() => navigate('/orders')}
+                  className="w-full px-4 py-2.5 text-left text-sm text-gray-700 transition hover:bg-pink-50 hover:text-pink-700"
+                >
                   My Orders
-                </div>
+                </button>
 
-                {/* Delete Account */}
-                <div className="mb-2 text-danger" style={{ cursor: 'pointer' }} onClick={() => navigate('/delete-account')}>
+                <button
+                  onClick={() => navigate('/delete-account')}
+                  className="w-full px-4 py-2.5 text-left text-sm text-red-600 transition hover:bg-red-50"
+                >
                   Delete Account
-                </div>
+                </button>
 
-                {/* Logout */}
-                <div className="text-primary" style={{ cursor: 'pointer' }} onClick={handleLogout}>
+                <div className="my-1 border-t border-gray-100"></div>
+
+                <button
+                  onClick={handleLogout}
+                  className="w-full px-4 py-2.5 text-left text-sm text-gray-700 transition hover:bg-pink-50 hover:text-pink-700"
+                >
                   Logout
-                </div>
+                </button>
               </div>
             )}
           </div>
 
-          {/* Cart Icon with Count */}
-          <Link to="/cart" className="text-decoration-none text-dark d-flex align-items-center position-relative">
-            <FaShoppingCart className="me-2" /> Cart
+          {/* Cart */}
+          <Link
+            to="/cart"
+            className="relative p-2 text-pink-700 transition hover:text-pink-600"
+          >
+            <FaShoppingCart size={18} />
+
             {cartItems.length > 0 && (
-              <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+              <span className="absolute right-0 top-0 inline-flex h-5 w-5 items-center justify-center rounded-full border-2 border-white bg-pink-600 text-[10px] font-bold leading-none text-white">
                 {cartItems.length}
               </span>
             )}
           </Link>
+
         </div>
       </div>
+      <hr className="border-t-1 border-black" />
+
     </nav>
   );
 };

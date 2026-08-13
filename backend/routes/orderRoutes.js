@@ -1,24 +1,59 @@
-import express from "express";
-import Order from "../models/Order.js";
+const express = require("express");
 
 const router = express.Router();
 
-router.post("/", async (req, res) => {
-  try {
-    const { userId, items, totalPrice, date } = req.body;
+const verifyToken = require("../middleware/authMiddleware");
 
-    if (!userId || !items || !totalPrice) {
-      return res.status(400).json({ message: "Missing order details" });
-    }
+const validate = require("../middleware/validateMiddleware");
 
-    const newOrder = new Order({ userId, items, totalPrice, date });
-    await newOrder.save();
+const {
+    createOrder,
+    getMyOrders,
+    getOrderById,
+    updateOrderStatus,
+    deleteOrder,
+} = require("../controllers/orderController");
 
-    res.status(201).json({ message: "Order placed successfully!" });
-  } catch (error) {
-    console.error("Order Error:", error.message);
-    res.status(500).json({ message: "Failed to place order" });
-  }
-});
+const {
+    createOrderValidation,
+    updateOrderValidation,
+} = require("../utils/orderValidation");
 
-export default router;
+// Create Order
+router.post(
+    "/",
+    verifyToken,
+    validate(createOrderValidation),
+    createOrder
+);
+
+// Get Logged-in User Orders
+router.get(
+    "/my-orders",
+    verifyToken,
+    getMyOrders
+);
+
+// Get Single Order
+router.get(
+    "/:id",
+    verifyToken,
+    getOrderById
+);
+
+// Update Order Status
+router.put(
+    "/:id",
+    verifyToken,
+    validate(updateOrderValidation),
+    updateOrderStatus
+);
+
+// Delete Order
+router.delete(
+    "/:id",
+    verifyToken,
+    deleteOrder
+);
+
+module.exports = router;
