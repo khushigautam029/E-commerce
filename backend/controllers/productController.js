@@ -1,6 +1,6 @@
 const Product = require("../models/productModel");
 const { STATUS_CODES, MESSAGES } = require("../utils/setConflicts");
-
+const mongoose = require("mongoose");
 const {
     productSchema,
     productUpdateSchema,

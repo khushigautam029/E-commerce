@@ -9,23 +9,14 @@ const objectId = (value, helpers) => {
     return value;
 };
 
-const cartSchema = Joi.object({
-    user: Joi.string()
-        .custom(objectId, "MongoDB ObjectId validation")
-        .required()
-        .messages({
-            "string.empty": "User ID is required",
-            "any.invalid": "Invalid user ID",
-            "any.required": "User ID is required",
-        }),
-
+const addToCartSchema = Joi.object({
     product: Joi.string()
         .custom(objectId, "MongoDB ObjectId validation")
         .required()
         .messages({
             "string.empty": "Product ID is required",
-            "any.invalid": "Invalid product ID",
             "any.required": "Product ID is required",
+            "any.invalid": "Invalid product ID",
         }),
 
     quantity: Joi.number()
@@ -40,6 +31,20 @@ const cartSchema = Joi.object({
         }),
 });
 
+const updateCartSchema = Joi.object({
+    quantity: Joi.number()
+        .integer()
+        .min(1)
+        .required()
+        .messages({
+            "number.base": "Quantity must be a number",
+            "number.integer": "Quantity must be a whole number",
+            "number.min": "Quantity must be at least 1",
+            "any.required": "Quantity is required",
+        }),
+});
+
 module.exports = {
-    cartSchema,
+    addToCartSchema,
+    updateCartSchema,
 };

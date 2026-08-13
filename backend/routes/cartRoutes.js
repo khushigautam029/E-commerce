@@ -1,10 +1,4 @@
 const express = require("express");
-
-const router = express.Router();
-
-const verifyToken = require("../middleware/authMiddleware");
-const validate = require("../middleware/validateMiddleware");
-
 const {
     addToCart,
     getCart,
@@ -12,47 +6,38 @@ const {
     removeCartItem,
     clearCart,
 } = require("../controllers/cartController");
+const authMiddleware = require("../middleware/authMiddleware");
+const router = express.Router();
 
-const {
-    addToCartValidation,
-    updateCartValidation,
-} = require("../utils/cartValidation");
-
-// Add product to cart
 router.post(
     "/",
-    verifyToken,
-    validate(addToCartValidation),
+    authMiddleware,
     addToCart
 );
 
-// Get logged-in user's cart
 router.get(
     "/",
-    verifyToken,
+    authMiddleware,
     getCart
 );
 
-// Update quantity
 router.put(
     "/:id",
-    verifyToken,
-    validate(updateCartValidation),
+    authMiddleware,
     updateCart
 );
 
-// Remove single item
 router.delete(
     "/:id",
-    verifyToken,
+    authMiddleware,
     removeCartItem
 );
 
-// Clear entire cart
 router.delete(
     "/",
-    verifyToken,
+    authMiddleware,
     clearCart
 );
+
 
 module.exports = router;

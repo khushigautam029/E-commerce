@@ -1,6 +1,7 @@
 const Joi = require("joi");
 const mongoose = require("mongoose");
 
+// MongoDB ObjectId Validation
 const objectId = (value, helpers) => {
     if (!mongoose.Types.ObjectId.isValid(value)) {
         return helpers.error("any.invalid");
@@ -9,36 +10,15 @@ const objectId = (value, helpers) => {
     return value;
 };
 
+// Order Item Validation
 const orderItemSchema = Joi.object({
     product: Joi.string()
         .custom(objectId, "MongoDB ObjectId validation")
         .required()
         .messages({
-            "any.invalid": "Invalid product ID",
+            "string.empty": "Product ID is required",
             "any.required": "Product ID is required",
-        }),
-
-    name: Joi.string()
-        .trim()
-        .min(1)
-        .required()
-        .messages({
-            "string.empty": "Product name is required",
-            "any.required": "Product name is required",
-        }),
-
-    image: Joi.string()
-        .trim()
-        .allow("")
-        .optional(),
-
-    price: Joi.number()
-        .min(0)
-        .required()
-        .messages({
-            "number.base": "Product price must be a number",
-            "number.min": "Product price cannot be negative",
-            "any.required": "Product price is required",
+            "any.invalid": "Invalid product ID",
         }),
 
     quantity: Joi.number()
@@ -53,31 +33,16 @@ const orderItemSchema = Joi.object({
         }),
 });
 
-const orderSchema = Joi.object({
-    user: Joi.string()
-        .custom(objectId, "MongoDB ObjectId validation")
-        .required()
-        .messages({
-            "any.invalid": "Invalid user ID",
-            "any.required": "User ID is required",
-        }),
-
+// Create Order Validation
+const createOrderSchema = Joi.object({
     items: Joi.array()
         .items(orderItemSchema)
         .min(1)
         .required()
         .messages({
+            "array.base": "Items must be an array",
             "array.min": "Order must contain at least one item",
             "any.required": "Order items are required",
-        }),
-
-    totalPrice: Joi.number()
-        .min(0)
-        .required()
-        .messages({
-            "number.base": "Total price must be a number",
-            "number.min": "Total price cannot be negative",
-            "any.required": "Total price is required",
         }),
 
     paymentMethod: Joi.string()
@@ -86,12 +51,15 @@ const orderSchema = Joi.object({
             "UPI",
             "Card"
         )
-        .optional()
         .default("Cash On Delivery")
         .messages({
             "any.only": "Invalid payment method",
+            "string.empty": "Payment method cannot be empty",
         }),
+});
 
+// Update Order Status Validation
+const updateOrderStatusSchema = Joi.object({
     orderStatus: Joi.string()
         .valid(
             "Pending",
@@ -100,14 +68,17 @@ const orderSchema = Joi.object({
             "Delivered",
             "Cancelled"
         )
-        .optional()
-        .default("Pending")
+        .required()
         .messages({
+            "string.empty": "Order status is required",
+            "any.required": "Order status is required",
             "any.only": "Invalid order status",
         }),
 });
 
+// Export
 module.exports = {
-    orderSchema,
+    createOrderSchema,
     orderItemSchema,
+    updateOrderStatusSchema,
 };

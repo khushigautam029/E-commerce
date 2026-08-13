@@ -1,22 +1,46 @@
 const Cart = require("../models/cartModel");
 const Product = require("../models/productModel");
+const {
+    addToCartSchema,
+    updateCartSchema,
+} = require("../validation/cartValidation");
 
 const {
     STATUS_CODES,
     MESSAGES,
 } = require("../utils/setConflicts");
 
-// ======================================
 // Add Product To Cart
-// ======================================
-
 const addToCart = async (req, res) => {
     try {
-        const { product, quantity } = req.body;
+        const { error, value } = addToCartSchema.validate(
+            req.body,
+            {
+                abortEarly: false,
+                stripUnknown: true,
+            }
+        );
+        if (error) {
+            return res.status(
+                STATUS_CODES.BAD_REQUEST
+            ).json({
+                success: false,
+                message: "Validation failed",
+                errors: error.details.map(
+                    (detail) => detail.message
+                ),
+            });
+        }
+        const { product, quantity } = value;
         const userId = req.user.userId;
-        const existingProduct = await Product.findById(product);
+        const existingProduct = await Product.findById(
+            product
+        );
+
         if (!existingProduct) {
-            return res.status(STATUS_CODES.NOT_FOUND).json({
+            return res.status(
+                STATUS_CODES.NOT_FOUND
+            ).json({
                 success: false,
                 message: MESSAGES.PRODUCT_NOT_FOUND,
             });
@@ -29,7 +53,9 @@ const addToCart = async (req, res) => {
         if (cartItem) {
             cartItem.quantity += quantity;
             await cartItem.save();
-            return res.status(STATUS_CODES.OK).json({
+            return res.status(
+                STATUS_CODES.OK
+            ).json({
                 success: true,
                 message: MESSAGES.CART_ITEM_UPDATED,
                 cartItem,
@@ -42,13 +68,15 @@ const addToCart = async (req, res) => {
             quantity,
         });
 
-        return res.status(STATUS_CODES.CREATED).json({
+        return res.status(
+            STATUS_CODES.CREATED
+        ).json({
             success: true,
             message: MESSAGES.CART_ITEM_ADDED,
             cartItem: newCartItem,
         });
-
     } catch (error) {
+        console.error("Add To Cart Error:", error);
         return res.status(
             STATUS_CODES.INTERNAL_SERVER_ERROR
         ).json({
@@ -58,10 +86,6 @@ const addToCart = async (req, res) => {
         });
     }
 };
-
-// ======================================
-// Get Logged In User Cart
-// ======================================
 
 const getCart = async (req, res) => {
     try {
@@ -91,13 +115,40 @@ const getCart = async (req, res) => {
     }
 };
 
-// ======================================
-// Update Cart Quantity
-// ======================================
-
 const updateCart = async (req, res) => {
     try {
-        const { quantity } = req.body;
+
+        // ==========================================
+        // Joi Validation
+        // ==========================================
+
+        const { error, value } = updateCartSchema.validate(
+            req.body,
+            {
+                abortEarly: false,
+                stripUnknown: true,
+            }
+        );
+
+        if (error) {
+            return res.status(
+                STATUS_CODES.BAD_REQUEST
+            ).json({
+                success: false,
+                message: "Validation failed",
+                errors: error.details.map(
+                    (detail) => detail.message
+                ),
+            });
+        }
+
+        const { quantity } = value;
+
+
+        // ==========================================
+        // Find Cart Item
+        // ==========================================
+
         const cartItem = await Cart.findOne({
             _id: req.params.id,
             user: req.user.userId,
@@ -112,13 +163,15 @@ const updateCart = async (req, res) => {
         }
         cartItem.quantity = quantity;
         await cartItem.save();
-        return res.status(STATUS_CODES.OK).json({
+        return res.status(
+            STATUS_CODES.OK
+        ).json({
             success: true,
             message: MESSAGES.CART_ITEM_UPDATED,
             cartItem,
         });
-
     } catch (error) {
+        console.error("Update Cart Error:", error);
         return res.status(
             STATUS_CODES.INTERNAL_SERVER_ERROR
         ).json({
@@ -129,10 +182,7 @@ const updateCart = async (req, res) => {
     }
 };
 
-// ======================================
 // Remove Single Cart Item
-// ======================================
-
 const removeCartItem = async (req, res) => {
     try {
         const cartItem = await Cart.findOne({
@@ -164,10 +214,7 @@ const removeCartItem = async (req, res) => {
     }
 };
 
-// ======================================
 // Clear Entire Cart
-// ======================================
-
 const clearCart = async (req, res) => {
     try {
         await Cart.deleteMany({

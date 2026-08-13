@@ -152,3 +152,60 @@ exports.loginUser = async (req, res) => {
         });
     }
 };
+
+
+// Get All Users
+exports.getAllUsers = async (req, res) => {
+    try {
+        const users = await User.find()
+            .select("-password")
+            .sort({ createdAt: -1 });
+        return res.status(STATUS_CODES.OK).json({
+            success: true,
+            message: "Users fetched successfully",
+            totalUsers: users.length,
+            users,
+        });
+    } catch (error) {
+        console.error("Get Users Error:", error);
+        return res.status(
+            STATUS_CODES.INTERNAL_SERVER_ERROR
+        ).json({
+            success: false,
+            message: MESSAGES.SERVER_ERROR,
+        });
+    }
+};
+
+// Get User By ID
+exports.getUserById = async (req, res) => {
+    try {
+
+        const user = await User.findById(req.params.id)
+            .select("-password");
+
+        if (!user) {
+            return res.status(STATUS_CODES.NOT_FOUND).json({
+                success: false,
+                message: "User not found",
+            });
+        }
+
+        return res.status(STATUS_CODES.OK).json({
+            success: true,
+            message: "User fetched successfully",
+            user,
+        });
+
+    } catch (error) {
+
+        console.error("Get User By ID Error:", error);
+
+        return res.status(
+            STATUS_CODES.INTERNAL_SERVER_ERROR
+        ).json({
+            success: false,
+            message: MESSAGES.SERVER_ERROR,
+        });
+    }
+};

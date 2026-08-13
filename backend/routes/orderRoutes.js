@@ -1,11 +1,5 @@
 const express = require("express");
 
-const router = express.Router();
-
-const verifyToken = require("../middleware/authMiddleware");
-
-const validate = require("../middleware/validateMiddleware");
-
 const {
     createOrder,
     getMyOrders,
@@ -13,47 +7,38 @@ const {
     updateOrderStatus,
     deleteOrder,
 } = require("../controllers/orderController");
+const authMiddleware = require("../middleware/authMiddleware");
+const router = express.Router();
 
-const {
-    createOrderValidation,
-    updateOrderValidation,
-} = require("../utils/orderValidation");
-
-// Create Order
 router.post(
     "/",
-    verifyToken,
-    validate(createOrderValidation),
+    authMiddleware,
     createOrder
 );
 
-// Get Logged-in User Orders
 router.get(
     "/my-orders",
-    verifyToken,
+    authMiddleware,
     getMyOrders
 );
 
-// Get Single Order
 router.get(
     "/:id",
-    verifyToken,
+    authMiddleware,
     getOrderById
 );
 
-// Update Order Status
 router.put(
-    "/:id",
-    verifyToken,
-    validate(updateOrderValidation),
+    "/:id/status",
+    authMiddleware,
     updateOrderStatus
 );
 
-// Delete Order
 router.delete(
     "/:id",
-    verifyToken,
+    authMiddleware,
     deleteOrder
 );
+
 
 module.exports = router;
