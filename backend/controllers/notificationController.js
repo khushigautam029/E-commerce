@@ -5,11 +5,7 @@ const {
     MESSAGES,
 } = require("../utils/setConflicts");
 
-
-// ======================================
 // Get My Notifications
-// ======================================
-
 const getMyNotifications = async (req, res) => {
     try {
 
@@ -25,7 +21,6 @@ const getMyNotifications = async (req, res) => {
             user: req.user.userId,
             isRead: false,
         });
-
         return res.status(STATUS_CODES.OK).json({
             success: true,
             message: "Notifications fetched successfully",
@@ -33,9 +28,7 @@ const getMyNotifications = async (req, res) => {
             unreadCount,
             notifications,
         });
-
     } catch (error) {
-
         console.error(
             "Get Notifications Error:",
             error
@@ -51,11 +44,7 @@ const getMyNotifications = async (req, res) => {
     }
 };
 
-
-// ======================================
 // Mark Notification As Read
-// ======================================
-
 const markNotificationAsRead = async (req, res) => {
     try {
 
@@ -86,12 +75,10 @@ const markNotificationAsRead = async (req, res) => {
         });
 
     } catch (error) {
-
         console.error(
             "Mark Notification Error:",
             error
         );
-
         return res.status(
             STATUS_CODES.INTERNAL_SERVER_ERROR
         ).json({

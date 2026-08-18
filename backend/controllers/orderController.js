@@ -8,15 +8,11 @@ const {
     STATUS_CODES,
     MESSAGES,
 } = require("../utils/setConflicts");
+const Notification = require("../models/notificationModel");
 
 // Create Order
 const createOrder = async (req, res) => {
     try {
-
-        // ==========================================
-        // Joi Validation
-        // ==========================================
-
         const { error, value } = createOrderSchema.validate(
             req.body,
             {
@@ -41,12 +37,6 @@ const createOrder = async (req, res) => {
 
         let orderItems = [];
         let totalPrice = 0;
-
-
-        // ==========================================
-        // Process Products
-        // ==========================================
-
         for (const item of items) {
 
             const product = await Product.findById(
@@ -62,11 +52,6 @@ const createOrder = async (req, res) => {
                 });
             }
 
-
-            // ==========================================
-            // Check Stock
-            // ==========================================
-
             if (product.stock < item.quantity) {
                 return res.status(
                     STATUS_CODES.BAD_REQUEST
@@ -76,11 +61,6 @@ const createOrder = async (req, res) => {
                 });
             }
 
-
-            // ==========================================
-            // Create Order Item
-            // ==========================================
-
             orderItems.push({
                 product: product._id,
                 name: product.name,
@@ -89,34 +69,25 @@ const createOrder = async (req, res) => {
                 quantity: item.quantity,
             });
 
-
-            // ==========================================
-            // Calculate Total
-            // ==========================================
-
             totalPrice +=
                 product.price * item.quantity;
-
-
-            // ==========================================
-            // Reduce Stock
-            // ==========================================
-
             product.stock -= item.quantity;
-
             await product.save();
         }
-
-
-        // ==========================================
-        // Create Order
-        // ==========================================
 
         const order = await Order.create({
             user: userId,
             items: orderItems,
             totalPrice,
             paymentMethod,
+        });
+
+        await Notification.create({
+            user: userId,
+            order: order._id,
+            type: "ORDER_PLACED",
+            title: "Order Placed",
+            message: `Your order #${order._id} has been placed successfully.`,
         });
 
 
@@ -233,7 +204,53 @@ const updateOrderStatus = async (req, res) => {
         }
         // Update Status
         order.orderStatus = orderStatus;
+
         await order.save();
+
+        let notificationType;
+        let notificationTitle;
+        let notificationMessage;
+
+        switch (orderStatus) {
+            case "Processing":
+                notificationType = "ORDER_CONFIRMED";
+                notificationTitle = "Order Confirmed";
+                notificationMessage =
+                    `Your order #${order._id} has been confirmed and is being processed.`;
+                break;
+
+            case "Shipped":
+                notificationType = "ORDER_SHIPPED";
+                notificationTitle = "Order Shipped";
+                notificationMessage =
+                    `Your order #${order._id} has been shipped.`;
+                break;
+
+            case "Delivered":
+                notificationType = "ORDER_DELIVERED";
+                notificationTitle = "Order Delivered";
+                notificationMessage =
+                    `Your order #${order._id} has been delivered successfully.`;
+                break;
+
+            case "Cancelled":
+                notificationType = "ORDER_CANCELLED";
+                notificationTitle = "Order Cancelled";
+                notificationMessage =
+                    `Your order #${order._id} has been cancelled.`;
+                break;
+        }
+
+        if (notificationType) {
+            await Notification.create({
+                user: order.user,
+                order: order._id,
+                type: notificationType,
+                title: notificationTitle,
+                message: notificationMessage,
+            });
+        }
+
         return res.status(
             STATUS_CODES.OK
         ).json({
@@ -284,10 +301,78 @@ const deleteOrder = async (req, res) => {
     }
 };
 
+
+// ====================================
+// Cancel Order
+// ====================================
+
+const cancelOrder = async (req, res) => {
+    try {
+
+        const order = await Order.findOne({
+            _id: req.params.id,
+            user: req.user.userId,
+        });
+
+        if (!order) {
+            return res.status(STATUS_CODES.NOT_FOUND).json({
+                success: false,
+                message: MESSAGES.ORDER_NOT_FOUND,
+            });
+        }
+
+        // Only Pending orders can be cancelled
+        if (order.orderStatus !== "Pending") {
+            return res.status(STATUS_CODES.BAD_REQUEST).json({
+                success: false,
+                message: "Only pending orders can be cancelled",
+            });
+        }
+
+        // Restore product stock
+        for (const item of order.items) {
+
+            const product = await Product.findById(
+                item.product
+            );
+
+            if (product) {
+                product.stock += item.quantity;
+
+                await product.save();
+            }
+        }
+
+        // Update order status
+        order.orderStatus = "Cancelled";
+
+        await order.save();
+
+        return res.status(STATUS_CODES.OK).json({
+            success: true,
+            message: MESSAGES.ORDER_CANCELLED,
+            order,
+        });
+
+    } catch (error) {
+
+        return res.status(
+            STATUS_CODES.INTERNAL_SERVER_ERROR
+        ).json({
+            success: false,
+            message: MESSAGES.SERVER_ERROR,
+            error: error.message,
+        });
+
+    }
+};
+
+
 module.exports = {
     createOrder,
     getMyOrders,
     getOrderById,
     updateOrderStatus,
     deleteOrder,
+    cancelOrder
 };

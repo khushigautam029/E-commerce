@@ -5,7 +5,8 @@ const {
     getMyOrders,
     getOrderById,
     updateOrderStatus,
-    deleteOrder,
+    // deleteOrder,
+    cancelOrder
 } = require("../controllers/orderController");
 const authMiddleware = require("../middleware/authMiddleware");
 const router = express.Router();
@@ -34,10 +35,16 @@ router.put(
     updateOrderStatus
 );
 
-router.delete(
-    "/:id",
+// router.delete(
+//     "/:id",
+//     authMiddleware,
+//     deleteOrder
+// );
+
+router.put(
+    "/:id/cancel",
     authMiddleware,
-    deleteOrder
+    cancelOrder
 );
 
 
