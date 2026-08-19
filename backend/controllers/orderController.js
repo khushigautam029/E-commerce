@@ -9,6 +9,11 @@ const {
     MESSAGES,
 } = require("../utils/setConflicts");
 const Notification = require("../models/notificationModel");
+const sendEmail = require("../utils/sendEmail");
+const {
+    orderConfirmationEmailTemplate,
+} = require("../utils/emailTemplates");
+const User = require("../models/userModel");
 
 // Create Order
 const createOrder = async (req, res) => {
@@ -31,18 +36,31 @@ const createOrder = async (req, res) => {
             });
         }
 
-        const { items, paymentMethod } = value;
+        const {
+            items,
+            paymentMethod,
+        } = value;
+
 
         const userId = req.user.userId;
+        const user = await User.findById(userId);
+
+        if (!user) {
+            return res.status(STATUS_CODES.NOT_FOUND).json({
+                success: false,
+                message: "User not found",
+            });
+        }
 
         let orderItems = [];
         let totalPrice = 0;
+
         for (const item of items) {
 
             const product = await Product.findById(
                 item.product
             );
-
+            // Product not found
             if (!product) {
                 return res.status(
                     STATUS_CODES.NOT_FOUND
@@ -51,7 +69,7 @@ const createOrder = async (req, res) => {
                     message: MESSAGES.PRODUCT_NOT_FOUND,
                 });
             }
-
+            // Check stock
             if (product.stock < item.quantity) {
                 return res.status(
                     STATUS_CODES.BAD_REQUEST
@@ -60,7 +78,7 @@ const createOrder = async (req, res) => {
                     message: `${product.name} is out of stock`,
                 });
             }
-
+            // Add item to order
             orderItems.push({
                 product: product._id,
                 name: product.name,
@@ -68,13 +86,13 @@ const createOrder = async (req, res) => {
                 price: product.price,
                 quantity: item.quantity,
             });
-
+            // Calculate total
             totalPrice +=
                 product.price * item.quantity;
+            // Reduce stock
             product.stock -= item.quantity;
             await product.save();
         }
-
         const order = await Order.create({
             user: userId,
             items: orderItems,
@@ -90,6 +108,30 @@ const createOrder = async (req, res) => {
             message: `Your order #${order._id} has been placed successfully.`,
         });
 
+        try {
+            const emailTemplate =
+                orderConfirmationEmailTemplate({
+                    username: user.username,
+                    orderId: order._id,
+                    items: orderItems,
+                    totalPrice,
+                    paymentMethod,
+                });
+            await sendEmail({
+                to: user.email,
+                subject: emailTemplate.subject,
+                text: emailTemplate.text,
+                html: emailTemplate.html,
+            });
+
+
+        } catch (emailError) {
+            console.error(
+                "Order Confirmation Email Error:",
+                emailError.message
+            );
+
+        }
 
         return res.status(
             STATUS_CODES.CREATED
@@ -99,9 +141,12 @@ const createOrder = async (req, res) => {
             order,
         });
 
-    } catch (error) {
 
-        console.error("Create Order Error:", error);
+    } catch (error) {
+        console.error(
+            "Create Order Error:",
+            error
+        );
 
         return res.status(
             STATUS_CODES.INTERNAL_SERVER_ERROR

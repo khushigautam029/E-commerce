@@ -6,19 +6,13 @@ const {
     productUpdateSchema,
 } = require("../validation/productValidation");
 
-
-// ======================================================
 // Add Product
-// ======================================================
-
 const addProduct = async (req, res) => {
     try {
-
         // Joi validation
         const { error, value } = productSchema.validate(req.body, {
             abortEarly: false,
         });
-
         if (error) {
             return res.status(STATUS_CODES.BAD_REQUEST).json({
                 success: false,
@@ -26,8 +20,6 @@ const addProduct = async (req, res) => {
                 errors: error.details.map((detail) => detail.message),
             });
         }
-
-
         const {
             name,
             description,
@@ -40,9 +32,6 @@ const addProduct = async (req, res) => {
             isFeatured,
             isActive,
         } = value;
-
-
-        // Check duplicate product
         const existingProduct = await Product.findOne({
             name,
             brand,
@@ -55,8 +44,6 @@ const addProduct = async (req, res) => {
             });
         }
 
-
-        // Create product
         const product = await Product.create({
             name,
             description,
@@ -70,17 +57,13 @@ const addProduct = async (req, res) => {
             isActive,
         });
 
-
         return res.status(STATUS_CODES.CREATED).json({
             success: true,
             message: MESSAGES.PRODUCT_CREATED,
             product,
         });
-
     } catch (error) {
-
         console.error("Add Product Error:", error);
-
         return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
             success: false,
             message: MESSAGES.SERVER_ERROR,
@@ -90,16 +73,12 @@ const addProduct = async (req, res) => {
 };
 
 
-// ======================================================
 // Get All Products
-// ======================================================
-
 const getAllProducts = async (req, res) => {
     try {
-
         let {
             page = 1,
-            limit = 10,
+            limit = 12,
             search,
             category,
             minPrice,
@@ -107,35 +86,30 @@ const getAllProducts = async (req, res) => {
             sort,
         } = req.query;
 
-
         page = Number(page);
         limit = Number(limit);
 
-
-        // Validate pagination numbers
-        if (
-            !Number.isInteger(page) ||
-            page < 1
-        ) {
+        if (!Number.isInteger(page) || page < 1) {
             return res.status(STATUS_CODES.BAD_REQUEST).json({
                 success: false,
                 message: "Page must be a positive integer",
             });
         }
 
-
-        if (
-            !Number.isInteger(limit) ||
-            limit < 1
-        ) {
+        if (!Number.isInteger(limit) || limit < 1) {
             return res.status(STATUS_CODES.BAD_REQUEST).json({
                 success: false,
                 message: "Limit must be a positive integer",
             });
         }
 
+        if (limit > 100) {
+            return res.status(STATUS_CODES.BAD_REQUEST).json({
+                success: false,
+                message: "Limit cannot exceed 100",
+            });
+        }
 
-        // Validate price filters
         if (
             minPrice !== undefined &&
             (isNaN(Number(minPrice)) || Number(minPrice) < 0)
@@ -146,7 +120,6 @@ const getAllProducts = async (req, res) => {
             });
         }
 
-
         if (
             maxPrice !== undefined &&
             (isNaN(Number(maxPrice)) || Number(maxPrice) < 0)
@@ -156,7 +129,6 @@ const getAllProducts = async (req, res) => {
                 message: "Maximum price must be a valid positive number",
             });
         }
-
 
         if (
             minPrice !== undefined &&
@@ -169,11 +141,7 @@ const getAllProducts = async (req, res) => {
             });
         }
 
-
         const filter = {};
-
-
-        // Search
         if (search) {
             filter.name = {
                 $regex: search,
@@ -181,78 +149,59 @@ const getAllProducts = async (req, res) => {
             };
         }
 
-
-        // Category
         if (category) {
             filter.category = category;
         }
 
-
-        // Price filter
         if (minPrice !== undefined || maxPrice !== undefined) {
-
             filter.price = {};
-
             if (minPrice !== undefined) {
                 filter.price.$gte = Number(minPrice);
             }
-
             if (maxPrice !== undefined) {
                 filter.price.$lte = Number(maxPrice);
             }
         }
 
-
-        // Sorting
         let sortOption = {};
-
         switch (sort) {
-
             case "priceAsc":
                 sortOption.price = 1;
                 break;
-
             case "priceDesc":
                 sortOption.price = -1;
                 break;
-
             case "newest":
                 sortOption.createdAt = -1;
                 break;
-
             case "rating":
                 sortOption.rating = -1;
                 break;
-
             default:
                 sortOption.createdAt = -1;
         }
 
-
-        // Total products
         const totalProducts = await Product.countDocuments(filter);
-
-
-        // Get products
+        const totalPages = Math.ceil(totalProducts / limit);
+        const skip = (page - 1) * limit;
         const products = await Product.find(filter)
             .sort(sortOption)
-            .skip((page - 1) * limit)
+            .skip(skip)
             .limit(limit);
-
-
         return res.status(STATUS_CODES.OK).json({
             success: true,
             message: MESSAGES.PRODUCT_FETCHED,
-            totalProducts,
-            currentPage: page,
-            totalPages: Math.ceil(totalProducts / limit),
             products,
+            pagination: {
+                page,
+                limit,
+                totalProducts,
+                totalPages,
+            },
         });
 
     } catch (error) {
-
         console.error("Get Products Error:", error);
-
         return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
             success: false,
             message: MESSAGES.SERVER_ERROR,
@@ -261,16 +210,10 @@ const getAllProducts = async (req, res) => {
     }
 };
 
-
-// ======================================================
 // Get Product By ID
-// ======================================================
-
 const getProductById = async (req, res) => {
     try {
-
         const { id } = req.params;
-
 
         // Check ObjectId
         if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -280,10 +223,7 @@ const getProductById = async (req, res) => {
             });
         }
 
-
         const product = await Product.findById(id);
-
-
         if (!product) {
             return res.status(STATUS_CODES.NOT_FOUND).json({
                 success: false,
@@ -291,16 +231,12 @@ const getProductById = async (req, res) => {
             });
         }
 
-
         return res.status(STATUS_CODES.OK).json({
             success: true,
             product,
         });
-
     } catch (error) {
-
         console.error("Get Product By ID Error:", error);
-
         return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
             success: false,
             message: MESSAGES.SERVER_ERROR,
@@ -309,17 +245,10 @@ const getProductById = async (req, res) => {
     }
 };
 
-
-// ======================================================
 // Update Product
-// ======================================================
-
 const updateProduct = async (req, res) => {
     try {
-
         const { id } = req.params;
-
-
         // Check ObjectId
         if (!mongoose.Types.ObjectId.isValid(id)) {
             return res.status(STATUS_CODES.BAD_REQUEST).json({
@@ -327,8 +256,6 @@ const updateProduct = async (req, res) => {
                 message: "Invalid product ID",
             });
         }
-
-
         // Joi validation
         const { error, value } = productUpdateSchema.validate(
             req.body,
@@ -336,8 +263,6 @@ const updateProduct = async (req, res) => {
                 abortEarly: false,
             }
         );
-
-
         if (error) {
             return res.status(STATUS_CODES.BAD_REQUEST).json({
                 success: false,
@@ -345,7 +270,6 @@ const updateProduct = async (req, res) => {
                 errors: error.details.map((detail) => detail.message),
             });
         }
-
 
         const product = await Product.findByIdAndUpdate(
             id,
@@ -356,7 +280,6 @@ const updateProduct = async (req, res) => {
             }
         );
 
-
         if (!product) {
             return res.status(STATUS_CODES.NOT_FOUND).json({
                 success: false,
@@ -364,17 +287,13 @@ const updateProduct = async (req, res) => {
             });
         }
 
-
         return res.status(STATUS_CODES.OK).json({
             success: true,
             message: MESSAGES.PRODUCT_UPDATED,
             product,
         });
-
     } catch (error) {
-
         console.error("Update Product Error:", error);
-
         return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
             success: false,
             message: MESSAGES.SERVER_ERROR,
@@ -383,17 +302,10 @@ const updateProduct = async (req, res) => {
     }
 };
 
-
-// ======================================================
 // Delete Product
-// ======================================================
-
 const deleteProduct = async (req, res) => {
     try {
-
         const { id } = req.params;
-
-
         // Check ObjectId
         if (!mongoose.Types.ObjectId.isValid(id)) {
             return res.status(STATUS_CODES.BAD_REQUEST).json({
@@ -402,9 +314,7 @@ const deleteProduct = async (req, res) => {
             });
         }
 
-
         const product = await Product.findByIdAndDelete(id);
-
 
         if (!product) {
             return res.status(STATUS_CODES.NOT_FOUND).json({
@@ -413,16 +323,12 @@ const deleteProduct = async (req, res) => {
             });
         }
 
-
         return res.status(STATUS_CODES.OK).json({
             success: true,
             message: MESSAGES.PRODUCT_DELETED,
         });
-
     } catch (error) {
-
         console.error("Delete Product Error:", error);
-
         return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
             success: false,
             message: MESSAGES.SERVER_ERROR,

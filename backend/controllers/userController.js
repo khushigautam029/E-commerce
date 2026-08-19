@@ -12,10 +12,13 @@ const {
 } = require("../validation/userValidation");
 
 
-// Register User
+const sendEmail = require("../utils/sendEmail");
+const {
+    welcomeEmailTemplate,
+} = require("../utils/emailTemplates");
+
 exports.registerUser = async (req, res) => {
     try {
-        // Joi validation
         const { error, value } = signupSchema.validate(req.body, {
             abortEarly: false,
         });
@@ -35,23 +38,33 @@ exports.registerUser = async (req, res) => {
             email,
         } = value;
 
-        const existingUsername = await User.findOne({ username });
+
+        const existingUsername = await User.findOne({
+            username,
+        });
+
         if (existingUsername) {
             return res.status(STATUS_CODES.BAD_REQUEST).json({
                 success: false,
                 message: MESSAGES.USER_ALREADY_EXISTS,
             });
         }
-        const existingPhone = await User.findOne({ phone });
+
+        const existingPhone = await User.findOne({
+            phone,
+        });
+
         if (existingPhone) {
             return res.status(STATUS_CODES.BAD_REQUEST).json({
                 success: false,
                 message: "Phone number already exists",
             });
         }
-
         if (email) {
-            const existingEmail = await User.findOne({ email });
+
+            const existingEmail = await User.findOne({
+                email,
+            });
 
             if (existingEmail) {
                 return res.status(STATUS_CODES.BAD_REQUEST).json({
@@ -60,16 +73,32 @@ exports.registerUser = async (req, res) => {
                 });
             }
         }
-
         const hashedPassword = await bcrypt.hash(password, 10);
-
         const user = new User({
             username,
             phone,
             password: hashedPassword,
             email,
         });
+
         await user.save();
+        try {
+            const emailTemplate = welcomeEmailTemplate(
+                user.username
+            );
+            await sendEmail({
+                to: user.email,
+                subject: emailTemplate.subject,
+                text: emailTemplate.text,
+                html: emailTemplate.html,
+            });
+        } catch (emailError) {
+            console.error(
+                "Welcome Email Error:",
+                emailError.message
+            );
+        }
+
         return res.status(STATUS_CODES.CREATED).json({
             success: true,
             message: MESSAGES.REGISTER_SUCCESS,

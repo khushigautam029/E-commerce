@@ -1,5 +1,7 @@
 const express = require('express');
 const dotenv = require('dotenv');
+// Load environment variables FIRST
+dotenv.config();
 const mongoose = require('mongoose');
 const colors = require('colors');
 const cors = require('cors');
@@ -11,9 +13,8 @@ const cartRoutes = require("./routes/cartRoutes");
 const reviewRoutes = require("./routes/reviewRoutes");
 const notificationRoutes = require("./routes/notificationRoutes");
 const wishlistRoutes = require("./routes/wishlistRoutes.js");
+// const emailRoutes = require("./routes/emailRoutes");
 
-// Config
-dotenv.config();
 connectDB();
 
 const app = express();
@@ -31,6 +32,7 @@ app.use("/api/cart", cartRoutes);
 app.use("/api/review", reviewRoutes);
 app.use("/api/notification",notificationRoutes);
 app.use("/api/wishlist", wishlistRoutes);
+// app.use("/api/email", emailRoutes);
 
 const PORT = process.env.PORT || 5000;
 
