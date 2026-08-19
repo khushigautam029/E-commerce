@@ -14,6 +14,7 @@ const reviewRoutes = require("./routes/reviewRoutes");
 const notificationRoutes = require("./routes/notificationRoutes");
 const wishlistRoutes = require("./routes/wishlistRoutes.js");
 // const emailRoutes = require("./routes/emailRoutes");
+const recentlyViewedRoutes = require("./routes/recentlyViewedRoutes");
 
 connectDB();
 
@@ -33,6 +34,7 @@ app.use("/api/review", reviewRoutes);
 app.use("/api/notification",notificationRoutes);
 app.use("/api/wishlist", wishlistRoutes);
 // app.use("/api/email", emailRoutes);
+app.use("/api/recently-viewed", recentlyViewedRoutes);
 
 const PORT = process.env.PORT || 5000;
 
