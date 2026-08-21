@@ -92,9 +92,9 @@ const updateProfileSchema = Joi.object({
             "string.empty":
                 "Username cannot be empty",
             "string.min":
-                "Username must be at least 3 characters",
+                MESSAGES.USERNAME_MUST_BE_AT_LEAST_3_CHAR,
             "string.max":
-                "Username cannot exceed 30 characters",
+                MESSAGES.USERNAME_CANNOT_EXCEED_30_CHAR,
         }),
 
     phone: Joi.string()
@@ -104,7 +104,7 @@ const updateProfileSchema = Joi.object({
             "string.empty":
                 "Phone number cannot be empty",
             "string.pattern.base":
-                "Please enter a valid 10-digit Indian phone number",
+                MESSAGES.PHONE_NUMBER_MUST_BE_VALID_10_DIGIT,
         }),
 
     email: Joi.string()
@@ -162,9 +162,9 @@ const deleteAccountSchema = Joi.object({
         .required()
         .messages({
             "string.empty":
-                "Password is required",
+                MESSAGES.PASSWORD_REQUIRED,
             "any.required":
-                "Password is required",
+                MESSAGES.PASSWORD_REQUIRED,
         }),
 
 });

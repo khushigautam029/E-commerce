@@ -1,5 +1,6 @@
 const Joi = require("joi");
 const mongoose = require("mongoose");
+const { MESSAGES } = require("../utils/setConstants");
 
 const objectId = (value, helpers) => {
     if (!mongoose.Types.ObjectId.isValid(value)) {
@@ -14,9 +15,9 @@ const reviewSchema = Joi.object({
         .custom(objectId, "MongoDB ObjectId validation")
         .required()
         .messages({
-            "string.empty": "Product ID is required",
-            "any.required": "Product ID is required",
-            "any.invalid": "Invalid product ID",
+            "string.empty": MESSAGES.PRODUCT_ID_REQUIRED,
+            "any.required": MESSAGES.PRODUCT_ID_REQUIRED,
+            "any.invalid": MESSAGES.INVALID_PRODUCT_ID,
         }),
 
     rating: Joi.number()
