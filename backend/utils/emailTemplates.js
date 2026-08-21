@@ -147,10 +147,7 @@ My E-Commerce Team
                             >
                                 🎉
                             </div>
-
-
                             <!-- Heading -->
-
                             <h1
                                 style="
                                     margin: 0;
@@ -161,10 +158,7 @@ My E-Commerce Team
                             >
                                 Welcome, ${username}!
                             </h1>
-
-
                             <!-- Subtitle -->
-
                             <p
                                 style="
                                     margin: 15px 0 0;
@@ -176,18 +170,14 @@ My E-Commerce Team
                                 We're excited to have you as part
                                 of the My E-Commerce family.
                             </p>
-
                         </td>
-
                     </tr>
                     <tr>
-
                         <td
                             style="
                                 padding: 0 35px 25px;
                             "
                         >
-
                             <table
                                 width="100%"
                                 cellpadding="0"
@@ -198,9 +188,7 @@ My E-Commerce Team
                                     border-radius: 10px;
                                 "
                             >
-
                                 <tr>
-
                                     <td
                                         align="center"
                                         style="
@@ -216,7 +204,6 @@ My E-Commerce Team
                                         >
                                             ✅
                                         </div>
-
                                         <h3
                                             style="
                                                 margin: 0 0 8px;
@@ -226,7 +213,6 @@ My E-Commerce Team
                                         >
                                             Your Account Is Ready
                                         </h3>
-
                                         <p
                                             style="
                                                 margin: 0;
@@ -240,21 +226,12 @@ My E-Commerce Team
                                             You can now start exploring
                                             our store.
                                         </p>
-
                                     </td>
-
                                 </tr>
-
                             </table>
-
                         </td>
-
                     </tr>
 
-
-                    <!-- ============================= -->
-                    <!-- Message -->
-                    <!-- ============================= -->
 
                     <tr>
 
@@ -830,11 +807,6 @@ ${itemsHtml}
 </td>
 
 </tr>
-
-
-<!-- ============================================== -->
-<!-- Processing Message -->
-<!-- ============================================== -->
 
 <tr>
 

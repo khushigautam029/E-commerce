@@ -1,9 +1,5 @@
 const Joi = require("joi");
 
-// ======================================================
-// Create Product Validation
-// ======================================================
-
 const productSchema = Joi.object({
     name: Joi.string()
         .trim()
@@ -90,10 +86,6 @@ const productSchema = Joi.object({
         .default(true),
 });
 
-
-// ======================================================
-// Update Product Validation
-// ======================================================
 
 const productUpdateSchema = Joi.object({
     name: Joi.string()

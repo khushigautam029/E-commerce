@@ -1,4 +1,5 @@
 const Joi = require("joi");
+const { MESSAGES } = require("./setConstants");
 
 const registerValidation = (data) => {
     const schema = Joi.object({
@@ -8,17 +9,17 @@ const registerValidation = (data) => {
             .max(30)
             .required()
             .messages({
-                "string.empty": "Username is required",
-                "string.min": "Username must be at least 3 characters",
-                "string.max": "Username cannot exceed 30 characters",
+                "string.empty": MESSAGES.USERNAME_IS_REQUIRED,
+                "string.min": MESSAGES.USERNAME_MUST_BE_AT_LEAST_3_CHAR,
+                "string.max": MESSAGES.USERNAME_CANNOT_EXCEED_30_CHAR,
             }),
 
         phone: Joi.string()
             .pattern(/^[6-9]\d{9}$/)
             .required()
             .messages({
-                "string.pattern.base": "Phone number must be a valid 10-digit Indian mobile number",
-                "string.empty": "Phone number is required",
+                "string.pattern.base": MESSAGES.PHONE_NUMBER_MUST_BE_VALID_10_DIGIT,
+                "string.empty": MESSAGES.PHONE_NUMBER_REQUIRED,
             }),
 
         password: Joi.string()
@@ -29,10 +30,9 @@ const registerValidation = (data) => {
             )
             .required()
             .messages({
-                "string.min": "Password must be at least 6 characters",
-                "string.max": "Password cannot exceed 20 characters",
-                "string.pattern.base":
-                    "Password must contain uppercase, lowercase, number and special character",
+                "string.min":MESSAGES.PASSWORD_MUST_BE_6_CHAR,
+                "string.max": MESSAGES.PASSWORD_CANNOT_EXCEED_20_CHAR,
+                "string.pattern.base":MESSAGES.PASSWORD_VALIDATION,
             }),
     });
 

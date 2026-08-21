@@ -1,4 +1,5 @@
 const Joi = require("joi");
+const { MESSAGES } = require("./setConstants");
 
 const addToCartValidation = (data) => {
 
@@ -7,7 +8,7 @@ const addToCartValidation = (data) => {
         product: Joi.string()
             .required()
             .messages({
-                "string.empty": "Product is required",
+                "string.empty": MESSAGES.PRODUCT_REQUIRED,
             }),
 
         quantity: Joi.number()
@@ -15,7 +16,7 @@ const addToCartValidation = (data) => {
             .min(1)
             .required()
             .messages({
-                "number.min": "Quantity must be at least 1",
+                "number.min": MESSAGES.QUANTITY_MUST_BE_ATLEAST_1,
             }),
 
     });

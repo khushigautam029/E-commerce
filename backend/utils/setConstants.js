@@ -119,7 +119,37 @@ const MESSAGES = {
     PRODUCT_REMOVED_FROM_WISHLIST:"Product removed from wishlist",
     FAILED_TO_REMOVE_PRODUCT_FROM_WISHLIST:"Failed to remove product from wishlist",
     WISHLIST_CLEARED_SUCCESSFULLY:"Wishlist cleared successfully",
-    FAILED_TO_CLEAR_WISHLIST:"Failed to clear wishlist"
+    FAILED_TO_CLEAR_WISHLIST:"Failed to clear wishlist",
+
+    USERNAME_IS_REQUIRED:"Username is required",
+    USERNAME_MUST_BE_AT_LEAST_3_CHAR:"Username must be at least 3 characters",
+    USERNAME_CANNOT_EXCEED_30_CHAR:"Username cannot exceed 30 characters",
+    PHONE_NUMBER_MUST_BE_VALID_10_DIGIT:"Phone number must be a valid 10-digit Indian mobile number",
+    PHONE_NUMBER_REQUIRED:"Phone number is required",
+    PASSWORD_MUST_BE_6_CHAR:"Password must be at least 6 characters",
+    PASSWORD_CANNOT_EXCEED_20_CHAR:"Password cannot exceed 20 characters",
+    PASSWORD_VALIDATION:"Password must contain uppercase, lowercase, number and special character",
+    PRODUCT_REQUIRED:"Product is required",
+    QUANTITY_MUST_BE_ATLEAST_1:"Quantity must be at least 1",
+
+    INVALID_USERID:"Invalid user ID",
+    USERID_REQUIRED:"User ID is required",
+    INVALID_ORDERID:"Invalid order ID",
+    INVALID_NOTIFICATION_TYPE:"Invalid notification type",
+    NOTIFICATION_TYPE_IS_REQUIRED:"Notification type is required",
+    PRODUCT_NAME_REQUIRED:"Product name is required",
+    PRODUCT_NAME_ATLEAST_3_CHAR:"Product name should be at least 3 characters",
+    DESCRIPTION_REQUIRED:"Description is required",
+    CATEGORY_REQUIRED:"Category is required",
+    PRICE_MUST_BE_NUMBER:"Price must be a number",
+    PRICE_MUST_BE_GREATER_THAN_0:"Price must be greater than zero",
+
+    PRODUCT_ID_REQUIRED:"Product id is required",
+    QUANTITY_MUST_BE_NUMBER:"Quantity must be a number",
+    QUANTITY_MUST_BE_WHOLE_NUMBER:"Quantity must be a whole number",
+    QUANTITY_MUST_BE_ATLEAST_1:"Quantity must be at least 1",
+    QUANTITY_REQUIRED:"Quantity is required"
+
 };
 
 module.exports = {

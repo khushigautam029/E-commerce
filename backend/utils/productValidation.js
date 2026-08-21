@@ -1,4 +1,5 @@
 const Joi = require("joi");
+const { MESSAGES } = require("./setConstants");
 
 const addProductValidation = (data) => {
 
@@ -10,8 +11,8 @@ const addProductValidation = (data) => {
             .max(100)
             .required()
             .messages({
-                "string.empty": "Product name is required",
-                "string.min": "Product name should be at least 3 characters",
+                "string.empty": MESSAGES.PRODUCT_NAME_REQUIRED,
+                "string.min": MESSAGES.PRODUCT_NAME_ATLEAST_3_CHAR,
             }),
 
         description: Joi.string()
@@ -19,25 +20,23 @@ const addProductValidation = (data) => {
             .min(10)
             .required()
             .messages({
-                "string.empty": "Description is required",
+                "string.empty": MESSAGES.DESCRIPTION_REQUIRED,
             }),
 
         category: Joi.string()
             .required()
             .messages({
-                "string.empty": "Category is required",
+                "string.empty": MESSAGES.CATEGORY_REQUIRED,
             }),
 
         subCategory: Joi.string().allow(""),
-
         brand: Joi.string().allow(""),
-
         price: Joi.number()
             .positive()
             .required()
             .messages({
-                "number.base": "Price must be a number",
-                "number.positive": "Price must be greater than zero",
+                "number.base": MESSAGES.PRICE_MUST_BE_NUMBER,
+                "number.positive": MESSAGES.PRICE_MUST_BE_GREATER_THAN_0,
             }),
 
         stock: Joi.number()

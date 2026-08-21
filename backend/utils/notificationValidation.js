@@ -1,5 +1,6 @@
 const Joi = require("joi");
 const mongoose = require("mongoose");
+const { MESSAGES } = require("./setConstants");
 
 const objectId = (value, helpers) => {
     if (!mongoose.Types.ObjectId.isValid(value)) {
@@ -14,15 +15,15 @@ const notificationSchema = Joi.object({
         .custom(objectId, "MongoDB ObjectId validation")
         .required()
         .messages({
-            "any.invalid": "Invalid user ID",
-            "any.required": "User ID is required",
+            "any.invalid": MESSAGES.INVALID_USERID,
+            "any.required": MESSAGES.USERID_REQUIRED,
         }),
 
     order: Joi.string()
         .custom(objectId, "MongoDB ObjectId validation")
         .optional()
         .messages({
-            "any.invalid": "Invalid order ID",
+            "any.invalid": MESSAGES.INVALID_ORDERID,
         }),
 
     type: Joi.string()
@@ -35,8 +36,8 @@ const notificationSchema = Joi.object({
         )
         .required()
         .messages({
-            "any.only": "Invalid notification type",
-            "any.required": "Notification type is required",
+            "any.only": MESSAGES.INVALID_NOTIFICATION_TYPE,
+            "any.required": MESSAGES.NOTIFICATION_TYPE_IS_REQUIRED,
         }),
 
     title: Joi.string()
