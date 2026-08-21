@@ -1,5 +1,5 @@
 const Product = require("../models/productModel");
-const { STATUS_CODES, MESSAGES } = require("../utils/setConflicts");
+const { STATUS_CODES, MESSAGES } = require("../utils/setConstants");
 const mongoose = require("mongoose");
 const {
     productSchema,
@@ -16,7 +16,7 @@ const addProduct = async (req, res) => {
         if (error) {
             return res.status(STATUS_CODES.BAD_REQUEST).json({
                 success: false,
-                message: "Validation failed",
+                message: MESSAGES.VALIDATION_ERROR,
                 errors: error.details.map((detail) => detail.message),
             });
         }
@@ -92,21 +92,21 @@ const getAllProducts = async (req, res) => {
         if (!Number.isInteger(page) || page < 1) {
             return res.status(STATUS_CODES.BAD_REQUEST).json({
                 success: false,
-                message: "Page must be a positive integer",
+                message: MESSAGES.PAGE_MUST_BE_A_POSITIVE_INTEGER,
             });
         }
 
         if (!Number.isInteger(limit) || limit < 1) {
             return res.status(STATUS_CODES.BAD_REQUEST).json({
                 success: false,
-                message: "Limit must be a positive integer",
+                message: MESSAGES.LIMIT_MUST_BE_A_POSITIVE_INTEGER,
             });
         }
 
         if (limit > 100) {
             return res.status(STATUS_CODES.BAD_REQUEST).json({
                 success: false,
-                message: "Limit cannot exceed 100",
+                message:MESSAGES.LIMIT_CANNOT_EXCEED_100,
             });
         }
 
@@ -116,7 +116,7 @@ const getAllProducts = async (req, res) => {
         ) {
             return res.status(STATUS_CODES.BAD_REQUEST).json({
                 success: false,
-                message: "Minimum price must be a valid positive number",
+                message: MESSAGES.MINIMUM_PRICE_MUST_BE_A_VALID_NUMBER,
             });
         }
 
@@ -126,7 +126,7 @@ const getAllProducts = async (req, res) => {
         ) {
             return res.status(STATUS_CODES.BAD_REQUEST).json({
                 success: false,
-                message: "Maximum price must be a valid positive number",
+                message: MESSAGES.MAXIMUM_PRICE_MUST_BE_A_VALID_NUMBER,
             });
         }
 
@@ -137,7 +137,7 @@ const getAllProducts = async (req, res) => {
         ) {
             return res.status(STATUS_CODES.BAD_REQUEST).json({
                 success: false,
-                message: "Minimum price cannot be greater than maximum price",
+                message: MESSAGES.MINIMUM_PRICE_CANNOT_BE_GREATER_THAN_MAXIMUM_PRICE,
             });
         }
 
@@ -219,7 +219,7 @@ const getProductById = async (req, res) => {
         if (!mongoose.Types.ObjectId.isValid(id)) {
             return res.status(STATUS_CODES.BAD_REQUEST).json({
                 success: false,
-                message: "Invalid product ID",
+                message: MESSAGES.INVALID_PRODUCT_ID,
             });
         }
 
@@ -253,7 +253,7 @@ const updateProduct = async (req, res) => {
         if (!mongoose.Types.ObjectId.isValid(id)) {
             return res.status(STATUS_CODES.BAD_REQUEST).json({
                 success: false,
-                message: "Invalid product ID",
+                message: MESSAGES.INVALID_PRODUCT_ID,
             });
         }
         // Joi validation
@@ -266,7 +266,7 @@ const updateProduct = async (req, res) => {
         if (error) {
             return res.status(STATUS_CODES.BAD_REQUEST).json({
                 success: false,
-                message: "Validation failed",
+                message: MESSAGES.VALIDATION_ERROR,
                 errors: error.details.map((detail) => detail.message),
             });
         }
@@ -310,7 +310,7 @@ const deleteProduct = async (req, res) => {
         if (!mongoose.Types.ObjectId.isValid(id)) {
             return res.status(STATUS_CODES.BAD_REQUEST).json({
                 success: false,
-                message: "Invalid product ID",
+                message: MESSAGES.INVALID_PRODUCT_ID,
             });
         }
 

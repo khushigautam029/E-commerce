@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const { MESSAGES, STATUS_CODES } = require( "../utils/setConflicts.js");
+const { MESSAGES, STATUS_CODES } = require( "../utils/setConstants.js");
 const verifyToken = (req, res, next) => {
 
     const authHeader = req.headers.authorization;

@@ -1,4 +1,4 @@
-const { STATUS_CODES, MESSAGES } = require("../utils/setConflicts.js");
+const { STATUS_CODES, MESSAGES } = require("../utils/setConstants.js");
 const errorHandler =(err,req,res,next)=>{
     console.error(err);
     res.status(err.status || STATUS_CODES.INTERNAL_SERVER_ERROR).json({

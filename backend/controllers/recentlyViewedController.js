@@ -4,7 +4,7 @@ const Product = require("../models/productModel");
 const {
     STATUS_CODES,
     MESSAGES,
-} = require("../utils/setConflicts");
+} = require("../utils/setConstants");
 
 const addRecentlyViewed = async (req, res) => {
     try {
@@ -16,7 +16,7 @@ const addRecentlyViewed = async (req, res) => {
                 STATUS_CODES.BAD_REQUEST
             ).json({
                 success: false,
-                message: "Invalid product ID",
+                message: MESSAGES.INVALID_PRODUCT_ID,
             });
         }
         // Check product exist
@@ -73,7 +73,7 @@ const addRecentlyViewed = async (req, res) => {
             STATUS_CODES.OK
         ).json({
             success: true,
-            message: "Product added to recently viewed",
+            message: MESSAGES.PRODUCT_ADDED_TO_RECENTLY_VIEWED,
         });
     } catch (error) {
         console.error(
@@ -136,7 +136,7 @@ const removeRecentlyViewed = async (req, res) => {
                 STATUS_CODES.BAD_REQUEST
             ).json({
                 success: false,
-                message: "Invalid product ID",
+                message: MESSAGES.INVALID_PRODUCT_ID,
             });
         }
         const recentlyViewed =
@@ -149,15 +149,14 @@ const removeRecentlyViewed = async (req, res) => {
                 STATUS_CODES.NOT_FOUND
             ).json({
                 success: false,
-                message: "Product is not in recently viewed",
+                message: MESSAGES.PRODUCT_NOT_IN_RECENTLY_VIEWED,
             });
         }
         return res.status(
             STATUS_CODES.OK
         ).json({
             success: true,
-            message:
-                "Product removed from recently viewed",
+            message:MESSAGES.PRODUCT_REMOVED_FROM_RECENTLY_VIEWED,
         });
     } catch (error) {
         console.error(
@@ -187,15 +186,14 @@ const clearRecentlyViewed = async (req, res) => {
                 STATUS_CODES.NOT_FOUND
             ).json({
                 success: false,
-                message: "Recently viewed is already empty",
+                message: MESSAGES.RECENTLY_VIEWED_IS_ALREADY_EMPTY,
             });
         }
         return res.status(
             STATUS_CODES.OK
         ).json({
             success: true,
-            message:
-                "Recently viewed products cleared successfully",
+            message:MESSAGES.RECENTLY_VIEWED_PRODUCTS_CLEARED_SUCCESSFULLY,
         });
 
     } catch (error) {

@@ -3,7 +3,7 @@ const Notification = require("../models/notificationModel");
 const {
     STATUS_CODES,
     MESSAGES,
-} = require("../utils/setConflicts");
+} = require("../utils/setConstants");
 
 // Get My Notifications
 const getMyNotifications = async (req, res) => {
@@ -23,7 +23,7 @@ const getMyNotifications = async (req, res) => {
         });
         return res.status(STATUS_CODES.OK).json({
             success: true,
-            message: "Notifications fetched successfully",
+            message: MESSAGES.NOTIFICATIONS_FETCHED_SUCCESSFULLY,
             totalNotifications: notifications.length,
             unreadCount,
             notifications,
@@ -58,7 +58,7 @@ const markNotificationAsRead = async (req, res) => {
                 STATUS_CODES.NOT_FOUND
             ).json({
                 success: false,
-                message: "Notification not found",
+                message: MESSAGES.NOTIFICATION_NOT_FOUND,
             });
         }
 
@@ -70,7 +70,7 @@ const markNotificationAsRead = async (req, res) => {
             STATUS_CODES.OK
         ).json({
             success: true,
-            message: "Notification marked as read",
+            message: MESSAGES.NOTIFICATION_MARKED_AS_READ,
             notification,
         });
 
@@ -107,7 +107,7 @@ const markAllNotificationsAsRead = async (req, res) => {
             STATUS_CODES.OK
         ).json({
             success: true,
-            message: "All notifications marked as read",
+            message: MESSAGES.ALL_NOTIFICATIONS_MARKED_AS_READ,
         });
     } catch (error) {
         console.error(
@@ -137,14 +137,14 @@ const deleteNotification = async (req, res) => {
                 STATUS_CODES.NOT_FOUND
             ).json({
                 success: false,
-                message: "Notification not found",
+                message: MESSAGES.NOTIFICATION_NOT_FOUND,
             });
         }
         return res.status(
             STATUS_CODES.OK
         ).json({
             success: true,
-            message: "Notification deleted successfully",
+            message: MESSAGES.NOTIFICATION_DELETED_SUCCESSFULLY,
         });
     } catch (error) {
         console.error(

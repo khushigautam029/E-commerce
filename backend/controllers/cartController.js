@@ -8,7 +8,7 @@ const {
 const {
     STATUS_CODES,
     MESSAGES,
-} = require("../utils/setConflicts");
+} = require("../utils/setConstants");
 
 // Add Product To Cart
 const addToCart = async (req, res) => {
@@ -25,7 +25,7 @@ const addToCart = async (req, res) => {
                 STATUS_CODES.BAD_REQUEST
             ).json({
                 success: false,
-                message: "Validation failed",
+                message: MESSAGES.VALIDATION_ERROR,
                 errors: error.details.map(
                     (detail) => detail.message
                 ),
@@ -135,7 +135,7 @@ const updateCart = async (req, res) => {
                 STATUS_CODES.BAD_REQUEST
             ).json({
                 success: false,
-                message: "Validation failed",
+                message: MESSAGES.VALIDATION_ERROR,
                 errors: error.details.map(
                     (detail) => detail.message
                 ),

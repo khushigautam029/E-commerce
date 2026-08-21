@@ -7,7 +7,7 @@ const {
 const {
     STATUS_CODES,
     MESSAGES,
-} = require("../utils/setConflicts");
+} = require("../utils/setConstants");
 const Notification = require("../models/notificationModel");
 const sendEmail = require("../utils/sendEmail");
 const {
@@ -29,7 +29,7 @@ const createOrder = async (req, res) => {
         if (error) {
             return res.status(STATUS_CODES.BAD_REQUEST).json({
                 success: false,
-                message: "Validation failed",
+                message: MESSAGES.VALIDATION_ERROR,
                 errors: error.details.map(
                     (detail) => detail.message
                 ),
@@ -48,7 +48,7 @@ const createOrder = async (req, res) => {
         if (!user) {
             return res.status(STATUS_CODES.NOT_FOUND).json({
                 success: false,
-                message: "User not found",
+                message: MESSAGES.USER_NOT_FOUND,
             });
         }
 
@@ -227,7 +227,7 @@ const updateOrderStatus = async (req, res) => {
                 STATUS_CODES.BAD_REQUEST
             ).json({
                 success: false,
-                message: "Validation failed",
+                message: MESSAGES.VALIDATION_ERROR,
                 errors: error.details.map(
                     (detail) => detail.message
                 ),
@@ -346,11 +346,7 @@ const deleteOrder = async (req, res) => {
     }
 };
 
-
-// ====================================
-// Cancel Order
-// ====================================
-
+// Cancel OrdeR
 const cancelOrder = async (req, res) => {
     try {
 
@@ -370,7 +366,7 @@ const cancelOrder = async (req, res) => {
         if (order.orderStatus !== "Pending") {
             return res.status(STATUS_CODES.BAD_REQUEST).json({
                 success: false,
-                message: "Only pending orders can be cancelled",
+                message: MESSAGES.ONLY_PENDING_ORDERS_CAN_BE_CANCELLED,
             });
         }
 

@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const Wishlist = require("../models/wishlistModel.js");
 const Product = require("../models/productModel.js");
 const { wishlistSchema } = require("../validation/wishlistValidation.js");
-const { MESSAGES, STATUS_CODES } = require("../utils/setConflicts.js");
+const { MESSAGES, STATUS_CODES } = require("../utils/setConstants.js");
 
 // Add Product to Wishlist
 const addToWishlist = async (req, res) => {
@@ -28,7 +28,7 @@ const addToWishlist = async (req, res) => {
         if (!mongoose.Types.ObjectId.isValid(productId)) {
             return res.status(STATUS_CODES.BAD_REQUEST).json({
                 success: false,
-                message: "Invalid product ID",
+                message: MESSAGES.INVALID_PRODUCT_ID,
             });
         }
 
@@ -38,7 +38,7 @@ const addToWishlist = async (req, res) => {
         if (!product) {
             return res.status(STATUS_CODES.NOT_FOUND).json({
                 success: false,
-                message: "Product not found",
+                message: MESSAGES.PRODUCT_NOT_FOUND,
             });
         }
 
@@ -53,7 +53,7 @@ const addToWishlist = async (req, res) => {
 
             return res.status(STATUS_CODES.CREATED).json({
                 success: true,
-                message: "Product added to wishlist",
+                message: MESSAGES.PRODUCT_ADDED_TO_WISHLIST,
                 wishlist,
             });
         }
@@ -64,7 +64,7 @@ const addToWishlist = async (req, res) => {
         )) {
             return res.status(STATUS_CODES.CONFLICT).json({
                 success: false,
-                message: "Product is already in wishlist",
+                message: MESSAGES.PRODUCT_ALREADY_IN_WISHLIST
             });
         }
 
@@ -75,7 +75,7 @@ const addToWishlist = async (req, res) => {
 
         return res.status(STATUS_CODES.OK).json({
             success: true,
-            message: "Product added to wishlist",
+            message: MESSAGES.PRODUCT_ADDED_TO_WISHLIST,
             wishlist,
         });
 
@@ -85,7 +85,7 @@ const addToWishlist = async (req, res) => {
 
         return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
             success: false,
-            message: "Failed to add product to wishlist",
+            message: MESSAGES.FAILED_TO_ADD_PRODUCT_TO_WISHLIST,
         });
     }
 };
@@ -102,7 +102,7 @@ const getWishlist = async (req, res) => {
         if (!wishlist) {
             return res.status(STATUS_CODES.NOT_FOUND).json({
                 success: false,
-                message: "Wishlist is empty",
+                message: MESSAGES.WISHLIST_IS_EMPTY
             });
         }
 
@@ -117,7 +117,7 @@ const getWishlist = async (req, res) => {
 
         return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
             success: false,
-            message: "Failed to fetch wishlist",
+            message: MESSAGES.FAILED_TO_FETCH_WISHLIST,
         });
     }
 };
@@ -143,25 +143,17 @@ const removeFromWishlist = async (req, res) => {
         if (error) {
             return res.status(STATUS_CODES.BAD_REQUEST).json({
                 success: false,
-                message: MESSAGES.VALIDATION_FAILED,
+                message: MESSAGES.VALIDATION_ERROR,
                 errors: error.details.map((detail) => detail.message),
             });
         }
 
-        // --------------------------------------------------
-        // Check Valid MongoDB ObjectId
-        // --------------------------------------------------
-
         if (!mongoose.Types.ObjectId.isValid(productId)) {
             return res.status(STATUS_CODES.BAD_REQUEST).json({
                 success: false,
-                message: "Invalid product ID",
+                message: MESSAGES.INVALID_PRODUCT_ID,
             });
         }
-
-        // --------------------------------------------------
-        // Find User Wishlist
-        // --------------------------------------------------
 
         const wishlist = await Wishlist.findOne({
             user: userId,
@@ -170,13 +162,9 @@ const removeFromWishlist = async (req, res) => {
         if (!wishlist) {
             return res.status(STATUS_CODES.NOT_FOUND).json({
                 success: false,
-                message: "Wishlist not found",
+                message: MESSAGES.WISHLIST_NOT_FOUND,
             });
         }
-
-        // --------------------------------------------------
-        // Check Product Exists in Wishlist
-        // --------------------------------------------------
 
         const productExists = wishlist.products.some(
             (id) => id.toString() === productId
@@ -185,13 +173,9 @@ const removeFromWishlist = async (req, res) => {
         if (!productExists) {
             return res.status(STATUS_CODES.NOT_FOUND).json({
                 success: false,
-                message: "Product is not in wishlist",
+                message: MESSAGES.PRODUCT_NOT_IN_WISHLIST,
             });
         }
-
-        // --------------------------------------------------
-        // Remove Product
-        // --------------------------------------------------
 
         wishlist.products = wishlist.products.filter(
             (id) => id.toString() !== productId
@@ -201,7 +185,7 @@ const removeFromWishlist = async (req, res) => {
 
         return res.status(STATUS_CODES.OK).json({
             success: true,
-            message: "Product removed from wishlist",
+            message: MESSAGES.PRODUCT_REMOVED_FROM_WISHLIST,
             wishlist,
         });
 
@@ -211,24 +195,14 @@ const removeFromWishlist = async (req, res) => {
 
         return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
             success: false,
-            message: "Failed to remove product from wishlist",
+            message: MESSAGES.FAILED_TO_REMOVE_PRODUCT_FROM_WISHLIST
         });
     }
 };
 
-
-// ======================================================
-// Clear Wishlist
-// ======================================================
-
 const clearWishlist = async (req, res) => {
     try {
         const userId = req.user.userId;
-
-        // --------------------------------------------------
-        // Find User Wishlist
-        // --------------------------------------------------
-
         const wishlist = await Wishlist.findOne({
             user: userId,
         });
@@ -236,33 +210,21 @@ const clearWishlist = async (req, res) => {
         if (!wishlist) {
             return res.status(STATUS_CODES.NOT_FOUND).json({
                 success: false,
-                message: "Wishlist not found",
+                message: MESSAGES.WISHLIST_NOT_FOUND
             });
         }
-
-        // --------------------------------------------------
-        // Check Wishlist Already Empty
-        // --------------------------------------------------
 
         if (wishlist.products.length === 0) {
             return res.status(STATUS_CODES.BAD_REQUEST).json({
                 success: false,
-                message: "Wishlist is already empty",
+                message: MESSAGES.WISHLIST_IS_EMPTY
             });
         }
-
-        // --------------------------------------------------
-        // Clear Products
-        // --------------------------------------------------
-
         wishlist.products = [];
-
         await wishlist.save();
-
         return res.status(STATUS_CODES.OK).json({
             success: true,
-            message: "Wishlist cleared successfully",
-            wishlist,
+            message: MESSAGES.WISHLIST_CLEARED_SUCCESSFULLY
         });
 
     } catch (error) {
@@ -271,7 +233,7 @@ const clearWishlist = async (req, res) => {
 
         return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
             success: false,
-            message: "Failed to clear wishlist",
+            message: MESSAGES.FAILED_TO_CLEAR_WISHLIST,
         });
     }
 };

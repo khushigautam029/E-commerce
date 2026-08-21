@@ -3,7 +3,7 @@ const Product = require("../models/productModel");
 const {
     STATUS_CODES,
     MESSAGES,
-} = require("../utils/setConflicts");
+} = require("../utils/setConstants");
 const {
     reviewSchema,
     updateReviewSchema,
@@ -25,7 +25,7 @@ const addReview = async (req, res) => {
                 STATUS_CODES.BAD_REQUEST
             ).json({
                 success: false,
-                message: "Validation failed",
+                message: MESSAGES.VALIDATION_ERROR,
                 errors: error.details.map(
                     (detail) => detail.message
                 ),
@@ -65,7 +65,7 @@ const addReview = async (req, res) => {
                 STATUS_CODES.BAD_REQUEST
             ).json({
                 success: false,
-                message: "You have already reviewed this product",
+                message: MESSAGES.YOU_ALREADY_REVIEWED_THIS_PRODUCT,
             });
         }
 
@@ -80,7 +80,7 @@ const addReview = async (req, res) => {
             STATUS_CODES.CREATED
         ).json({
             success: true,
-            message: "Review added successfully",
+            message: MESSAGES.REVIEW_ADDED_SUCCESSFULLY,
             review,
         });
 
@@ -102,13 +102,10 @@ const addReview = async (req, res) => {
 // Get Reviews For Product
 const getProductReviews = async (req, res) => {
     try {
-
         const { productId } = req.params;
-
         const existingProduct = await Product.findById(
             productId
         );
-
         if (!existingProduct) {
             return res.status(
                 STATUS_CODES.NOT_FOUND
@@ -133,7 +130,7 @@ const getProductReviews = async (req, res) => {
             STATUS_CODES.OK
         ).json({
             success: true,
-            message: "Reviews fetched successfully",
+            message: MESSAGES.REVIEWS_FETCHED_SUCCESSFULLY,
             totalReviews: reviews.length,
             reviews,
         });
@@ -172,14 +169,14 @@ const getReviewById = async (req, res) => {
                 STATUS_CODES.NOT_FOUND
             ).json({
                 success: false,
-                message: "Review not found",
+                message: MESSAGES.REVIEW_NOT_FOUND,
             });
         }
         return res.status(
             STATUS_CODES.OK
         ).json({
             success: true,
-            message: "Review fetched successfully",
+            message: MESSAGES.REVIEWS_FETCHED_SUCCESSFULLY,
             review,
         });
     } catch (error) {
@@ -213,7 +210,7 @@ const updateReview = async (req, res) => {
                 STATUS_CODES.BAD_REQUEST
             ).json({
                 success: false,
-                message: "Validation failed",
+                message: MESSAGES.VALIDATION_ERROR,
                 errors: error.details.map(
                     (detail) => detail.message
                 ),
@@ -230,7 +227,7 @@ const updateReview = async (req, res) => {
                 STATUS_CODES.NOT_FOUND
             ).json({
                 success: false,
-                message: "Review not found",
+                message: MESSAGES.REVIEW_NOT_FOUND,
             });
         }
 
@@ -250,7 +247,7 @@ const updateReview = async (req, res) => {
             STATUS_CODES.OK
         ).json({
             success: true,
-            message: "Review updated successfully",
+            message: MESSAGES.REVIEW_ADDED_SUCCESSFULLY,
             review,
         });
 
@@ -286,7 +283,7 @@ const deleteReview = async (req, res) => {
                 STATUS_CODES.NOT_FOUND
             ).json({
                 success: false,
-                message: "Review not found",
+                message: MESSAGES.REVIEW_NOT_FOUND,
             });
         }
 
@@ -298,7 +295,7 @@ const deleteReview = async (req, res) => {
             STATUS_CODES.OK
         ).json({
             success: true,
-            message: "Review deleted successfully",
+            message: MESSAGES.REVIEW_DELETED_SUCCESSFULLY,
         });
 
     } catch (error) {

@@ -1,7 +1,7 @@
 const User = require("../models/userModel");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const { STATUS_CODES, MESSAGES } = require("../utils/setConflicts");
+const { STATUS_CODES, MESSAGES } = require("../utils/setConstants");
 
 const {
     signupSchema,
@@ -26,7 +26,7 @@ exports.registerUser = async (req, res) => {
         if (error) {
             return res.status(STATUS_CODES.BAD_REQUEST).json({
                 success: false,
-                message: "Validation failed",
+                message: MESSAGES.VALIDATION_ERROR,
                 errors: error.details.map((detail) => detail.message),
             });
         }
@@ -57,7 +57,7 @@ exports.registerUser = async (req, res) => {
         if (existingPhone) {
             return res.status(STATUS_CODES.BAD_REQUEST).json({
                 success: false,
-                message: "Phone number already exists",
+                message: MESSAGES.PHONE_NUMBER_ALREADY_EXISTS,
             });
         }
         if (email) {
@@ -69,7 +69,7 @@ exports.registerUser = async (req, res) => {
             if (existingEmail) {
                 return res.status(STATUS_CODES.BAD_REQUEST).json({
                     success: false,
-                    message: "Email already exists",
+                    message: MESSAGES.EMAIL_ALREADY_EXISTS,
                 });
             }
         }
@@ -124,7 +124,7 @@ exports.loginUser = async (req, res) => {
         if (error) {
             return res.status(STATUS_CODES.BAD_REQUEST).json({
                 success: false,
-                message: "Validation failed",
+                message: MESSAGES.VALIDATION_ERROR,
                 errors: error.details.map((detail) => detail.message),
             });
         }
@@ -194,7 +194,7 @@ exports.getAllUsers = async (req, res) => {
             .sort({ createdAt: -1 });
         return res.status(STATUS_CODES.OK).json({
             success: true,
-            message: "Users fetched successfully",
+            message: MESSAGES.USERS_FETCHED_SUCCESSFULLY,
             totalUsers: users.length,
             users,
         });
@@ -217,12 +217,12 @@ exports.getUserById = async (req, res) => {
         if (!user) {
             return res.status(STATUS_CODES.NOT_FOUND).json({
                 success: false,
-                message: "User not found",
+                message: MESSAGES.USER_NOT_FOUND,
             });
         }
         return res.status(STATUS_CODES.OK).json({
             success: true,
-            message: "User fetched successfully",
+            message: MESSAGES.USERS_FETCHED_SUCCESSFULLY,
             user,
         });
     } catch (error) {
@@ -248,7 +248,7 @@ exports.getProfile = async (req, res) => {
                 STATUS_CODES.NOT_FOUND
             ).json({
                 success: false,
-                message: "User not found",
+                message: MESSAGES.USER_NOT_FOUND,
             });
         }
         return res.status(
@@ -256,7 +256,7 @@ exports.getProfile = async (req, res) => {
         ).json({
             success: true,
             message:
-                "Profile fetched successfully",
+                MESSAGES.PROFILE_FETCHED,
             user,
         });
     } catch (error) {
@@ -289,7 +289,7 @@ exports.updateProfile = async (req, res) => {
                 STATUS_CODES.BAD_REQUEST
             ).json({
                 success: false,
-                message: "Validation failed",
+                message: MESSAGES.VALIDATION_ERROR,
                 errors: error.details.map(
                     (detail) => detail.message
                 ),
@@ -304,7 +304,7 @@ exports.updateProfile = async (req, res) => {
                 STATUS_CODES.NOT_FOUND
             ).json({
                 success: false,
-                message: "User not found",
+                message: MESSAGES.USER_NOT_FOUND,
             });
         }
         // Check username
@@ -325,8 +325,7 @@ exports.updateProfile = async (req, res) => {
                     STATUS_CODES.BAD_REQUEST
                 ).json({
                     success: false,
-                    message:
-                        "Username already exists",
+                    message:MESSAGES.USERNAME_ALREADY_EXISTS,
                 });
             }
         }
@@ -347,8 +346,7 @@ exports.updateProfile = async (req, res) => {
                     STATUS_CODES.BAD_REQUEST
                 ).json({
                     success: false,
-                    message:
-                        "Phone number already exists",
+                    message:MESSAGES.PHONE_NUMBER_ALREADY_EXISTS,
                 });
             }
         }
@@ -368,8 +366,7 @@ exports.updateProfile = async (req, res) => {
                     STATUS_CODES.BAD_REQUEST
                 ).json({
                     success: false,
-                    message:
-                        "Email already exists",
+                    message:MESSAGES.EMAIL_ALREADY_EXISTS,
                 });
             }
         }
@@ -391,8 +388,7 @@ exports.updateProfile = async (req, res) => {
             STATUS_CODES.OK
         ).json({
             success: true,
-            message:
-                "Profile updated successfully",
+            message:MESSAGES.PROFILE_FETCHED,
                     user: updatedUser,
         });
     } catch (error) {
@@ -425,7 +421,7 @@ exports.changePassword = async (req, res) => {
                 STATUS_CODES.BAD_REQUEST
             ).json({
                 success: false,
-                message: "Validation failed",
+                message: MESSAGES.VALIDATION_ERROR,
                 errors: error.details.map(
                     (detail) => detail.message
                 ),
@@ -444,7 +440,7 @@ exports.changePassword = async (req, res) => {
                 STATUS_CODES.NOT_FOUND
             ).json({
                 success: false,
-                message: "User not found",
+                message: MESSAGES.USER_NOT_FOUND,
             });
         }
 
@@ -459,8 +455,7 @@ exports.changePassword = async (req, res) => {
                 STATUS_CODES.BAD_REQUEST
             ).json({
                 success: false,
-                message:
-                    "Current password is incorrect",
+                message:MESSAGES.CURRENT_PASSWORD_IS_INCORRECT,
             });
         }
         // Prevent same password
@@ -474,8 +469,7 @@ exports.changePassword = async (req, res) => {
                 STATUS_CODES.BAD_REQUEST
             ).json({
                 success: false,
-                message:
-                    "New password must be different from current password",
+                message:MESSAGES.NEW_PASSWORD_SHOULD_BE_DIFFER_FROM_CURRENT,
             });
         }
         user.password =
@@ -489,8 +483,7 @@ exports.changePassword = async (req, res) => {
             STATUS_CODES.OK
         ).json({
             success: true,
-            message:
-                "Password changed successfully",
+            message:MESSAGES.PASSWORD_CHANGED,
         });
     } catch (error) {
         console.error(
@@ -523,7 +516,7 @@ exports.deleteAccount = async (req, res) => {
                 STATUS_CODES.BAD_REQUEST
             ).json({
                 success: false,
-                message: "Validation failed",
+                message: MESSAGES.VALIDATION_ERROR,
                 errors: error.details.map(
                     (detail) => detail.message
                 ),
@@ -538,7 +531,7 @@ exports.deleteAccount = async (req, res) => {
                 STATUS_CODES.NOT_FOUND
             ).json({
                 success: false,
-                message: "User not found",
+                message: MESSAGES.USER_NOT_FOUND,
             });
         }
         const isMatch =
@@ -551,8 +544,7 @@ exports.deleteAccount = async (req, res) => {
                 STATUS_CODES.BAD_REQUEST
             ).json({
                 success: false,
-                message:
-                    "Incorrect password",
+                message:MESSAGES.INCORRECT_PASSWORD,
             });
         }
         await User.findByIdAndDelete(
@@ -562,8 +554,7 @@ exports.deleteAccount = async (req, res) => {
             STATUS_CODES.OK
         ).json({
             success: true,
-            message:
-                "Account deleted successfully",
+            message:MESSAGES.ACCOUNT_DELETED,
         });
     } catch (error) {
         console.error(
