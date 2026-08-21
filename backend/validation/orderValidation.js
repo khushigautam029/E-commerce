@@ -1,5 +1,6 @@
 const Joi = require("joi");
 const mongoose = require("mongoose");
+const { MESSAGES } = require("../utils/setConstants");
 
 // MongoDB ObjectId Validation
 const objectId = (value, helpers) => {
@@ -16,9 +17,9 @@ const orderItemSchema = Joi.object({
         .custom(objectId, "MongoDB ObjectId validation")
         .required()
         .messages({
-            "string.empty": "Product ID is required",
-            "any.required": "Product ID is required",
-            "any.invalid": "Invalid product ID",
+            "string.empty": MESSAGES.PRODUCT_ID_REQUIRED,
+            "any.required": MESSAGES.PRODUCT_ID_REQUIRED,
+            "any.invalid": MESSAGES.INVALID_PRODUCT_ID,
         }),
 
     quantity: Joi.number()
@@ -26,10 +27,10 @@ const orderItemSchema = Joi.object({
         .min(1)
         .required()
         .messages({
-            "number.base": "Quantity must be a number",
-            "number.integer": "Quantity must be a whole number",
-            "number.min": "Quantity must be at least 1",
-            "any.required": "Quantity is required",
+            "number.base": MESSAGES.QUANTITY_MUST_BE_NUMBER,
+            "number.integer": MESSAGES.QUANTITY_MUST_BE_WHOLE_NUMBER,
+            "number.min": MESSAGES.QUANTITY_MUST_BE_ATLEAST_1,
+            "any.required": MESSAGES.QUANTITY_REQUIRED,
         }),
 });
 

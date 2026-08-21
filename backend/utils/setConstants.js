@@ -148,7 +148,9 @@ const MESSAGES = {
     QUANTITY_MUST_BE_NUMBER:"Quantity must be a number",
     QUANTITY_MUST_BE_WHOLE_NUMBER:"Quantity must be a whole number",
     QUANTITY_MUST_BE_ATLEAST_1:"Quantity must be at least 1",
-    QUANTITY_REQUIRED:"Quantity is required"
+    QUANTITY_REQUIRED:"Quantity is required",
+    EMAIL_REQUIRED:"Email is required",
+    PASSWORD_REQUIRED:"Password is required"
 
 };
 

@@ -1,4 +1,5 @@
 const Joi = require("joi");
+const { MESSAGES } = require("../utils/setConstants");
 
 const passwordPattern =
     /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
@@ -10,13 +11,13 @@ const signupSchema = Joi.object({
         .max(30)
         .required()
         .messages({
-            "string.empty": "Username is required",
+            "string.empty": MESSAGES.USERNAME_IS_REQUIRED,
             "string.min":
-                "Username must be at least 3 characters",
+                MESSAGES.USERNAME_MUST_BE_AT_LEAST_3_CHAR,
             "string.max":
-                "Username cannot exceed 30 characters",
+                MESSAGES.USERNAME_CANNOT_EXCEED_30_CHAR,
             "any.required":
-                "Username is required",
+                MESSAGES.USERNAME_IS_REQUIRED,
         }),
 
     phone: Joi.string()
@@ -25,11 +26,11 @@ const signupSchema = Joi.object({
         .required()
         .messages({
             "string.empty":
-                "Phone number is required",
+               MESSAGES.PHONE_NUMBER_REQUIRED,
             "string.pattern.base":
-                "Please enter a valid 10-digit Indian phone number",
+                MESSAGES.PHONE_NUMBER_MUST_BE_VALID_10_DIGIT,
             "any.required":
-                "Phone number is required",
+                MESSAGES.PHONE_NUMBER_REQUIRED,
         }),
 
     email: Joi.string()
@@ -38,11 +39,11 @@ const signupSchema = Joi.object({
         .required()
         .messages({
             "string.empty":
-                "Email is required",
+                MESSAGES.EMAIL_REQUIRED,
             "string.email":
                 "Please enter a valid email address",
             "any.required":
-                "Email is required",
+                MESSAGES.EMAIL_REQUIRED,
         }),
 
     password: Joi.string()
@@ -50,11 +51,11 @@ const signupSchema = Joi.object({
         .required()
         .messages({
             "string.empty":
-                "Password is required",
+                MESSAGES.PASSWORD_REQUIRED,
             "string.pattern.base":
-                "Password must be at least 6 characters and contain at least one letter, one number, and one special character",
+                MESSAGES.PASSWORD_VALIDATION,
             "any.required":
-                "Password is required",
+                MESSAGES.PASSWORD_REQUIRED,
         }),
 });
 
@@ -65,20 +66,20 @@ const loginSchema = Joi.object({
         .required()
         .messages({
             "string.empty":
-                "Email is required",
+                MESSAGES.EMAIL_REQUIRED,
             "string.email":
                 "Please enter a valid email address",
             "any.required":
-                "Email is required",
+                MESSAGES.EMAIL_REQUIRED,
         }),
 
     password: Joi.string()
         .required()
         .messages({
             "string.empty":
-                "Password is required",
+                MESSAGES.PASSWORD_REQUIRED,
             "any.required":
-                "Password is required",
+                MESSAGES.PASSWORD_REQUIRED,
         }),
 });
 
